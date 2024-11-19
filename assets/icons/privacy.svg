@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Created with Vectornator (http://vectornator.io/) -->
+<svg height="100%" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="0 0 20 20" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+<image height="100" id="Image" width="100" xlink:href="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAAENUlEQVR4nO3dXcglcxwH8MPmJSIphFpc7Q1qhZsVceclLlzwt5LCrpdSaovUpo2UvN4gaXfjwstKiZCQjSy5WEm7JZKXvO2WXIiw9qPJeFqPffaZc84c///M/L71v3ueOfX99J85M2dm/qNRJBKJRCKRSCQSifQwOAgn4hSciRUZxuWjoQfH4LyqDKTM4z2sHw0xOBjnFICQ5oEYHAqOwMUFAKQFQKpsGA0hOByXFlB+WgSk/yg4EBcVUHxqCNLv3RdOK6D0NCZIP2cKDsVlHQXp30zBqQUUnqYA6ddMwQU9AOkHSn3OkXoC0v3dF47sGUi3ZwqO7yFId2cKlvYUpJszpecg3UMZAEi3UAYC0h2UDoG8ZfqUj9IhkOe1k0dHJadDIOu0l3JnSodAVuLbFlHKnCkdAkm4v0WQMlE6BpLwUq9ROghyBTZhdy9ROgiS6nEbPsBvvULpMEiqx9VYi/vw0JRjWW6PPoCkFsfS3B4BIkBSATMhZoj8ZQeI/AUHiPylBkgBRaYAyV9eCpD8haUAyV9SCpD8xaQAyV9GKmDEpRP5EQJE/uIDRP6yA0T+ggNE/lIDpIAiU4DkLy8FSP7CUoDkLykFSP5iUoDkLyMVMOLSifwIASJP2VfhTjyJ1/A2tuANPIsHsDz3bVlDuC/r7vpxuCa3nO6u//Z6HBIgWoW4A59Nca/vD7gJS2KGmHrX9GqLd8e/j5Nil2UijOvwifbzI86KY4ixMK7BF2aXX6oXg8ZBXSOMK7Hd7PPTzB9Z6Mm3rBf8f/moerF0gFgQ41bsGrPU7/ExtuLzCf5/bYBYEOTDhiX+jpdxywLHn8fxTcNt/YyjYpdlr7Njd8MZsabBrm8Znm6Isi5A/KfAVxoUtwOrGx6LquPpfniiwXa/xP5xUPevAncuUlo1e24f92pvvRrEtgYopweIufJublDYO5NefsclDba/JkDMlXdvg8LumgJkSb2721c2Boi58jYuUtau+oRxIpAapbosv69sDhBz5T2zSFk7JzjBnA9SvYxgX9k6dJCVeArf4U9lpILfgOOGCLJFufm6FZQOgdyj/GwYEsjrys+ONkD6+qrxLGkDpI8v4+80SN+Wq+g2SM8WdGmSX+vj0cP1S8s21V+jiwLpw5JHTfIpbtjLtqsz+hcVBNL1RcGapLoude2sX2feCkiNsrznII81+IxV9S+LRYAcgAt7DLKq4edsKwKkRjmsQ0uvjpNdY3zOu0oB6dDixJOk6c+424sC2ePc5OwBHkNW44/iQPaAORrnFrTA/bSXyRf7lrV5qk+YNci8laRPwMk4AysyjDdbOg+5cYHzkFZe8j8aSiz+c+okZ+oP4rniztQHBjLTjIYSAVJWBEhZwSOG8IthV4LzlZ9uLog8aca4Mz1HvsKxoyHF37d3Vo8VVA92jvuQzaxSXdZf/w/GX4jFyxEmZ7TKAAAAAElFTkSuQmCC"/>
+</defs>
+<g id="Untitled" vectornator:layerName="Untitled">
+<g opacity="1" vectornator:layerName="rect">
+<clipPath id="ClipPath">
+<path d="M0 0L20 0L20 0L20 20L20 20L0 20L0 20L0 0L0 0Z"/>
+</clipPath>
+<g clip-path="url(#ClipPath)">
+<use opacity="1" transform="matrix(0.2 0 0 0.2 0 0)" vectornator:layerName="image" xlink:href="#Image"/>
+</g>
+</g>
+</g>
+</svg>

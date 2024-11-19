@@ -1,0 +1,110 @@
+{
+  "app_name": "Anime Wallpapers",
+  "app_icon": "assets/iconapp.jpg",
+  "cover": "assets/splash.jpg",
+  "main_color": "#0FC0EC",
+  "contact": "contact@email.com",
+  "about": "https://pub.dev/packages/stacked_animated_list",
+  "privacy": "path_to",
+  "terms": "path_to",
+  "ads": {
+    "admob": "true",
+    "meta": "false",
+    "unity": "false",
+    "applovin": "false"
+  },
+  "intro": [
+    {
+      "title": "Title 1",
+      "description": "Description 1",
+      "icon": "assets/onboarding1.jpg"
+    },
+    {
+      "title": "Title 2",
+      "description": "Description 2",
+      "icon": "assets/onboarding2.jpg"
+    },
+    {
+      "title": "Title 3",
+      "description": "Description 3",
+      "icon": "assets/onboarding3.jpg"
+    }
+  ],
+  "wallpapers": [
+    {
+      "category": "Luca",
+      "icon": "assets/category_1.jpg",
+      "images": [
+        "assets/image_1.jpg",
+        "assets/image_2.jpg",
+        "assets/image_3.png"
+      ]
+    },
+    {
+      "category": "Moana",
+      "icon": "assets/category_2.webp",
+      "images": [
+        "assets/image_4.jpg",
+        "assets/image_1.jpg",
+        "assets/image_2.jpg"
+      ]
+    },
+    {
+      "category": "Onward",
+      "icon": "assets/category_3.jpg",
+      "images": [
+        "assets/image_2.jpg",
+        "assets/image_3.png",
+        "assets/image_4.jpg"
+      ]
+    },
+    {
+      "category": "The Good Dinausor",
+      "icon": "assets/category_4.jpg",
+      "images": [
+        "assets/image_1.jpg",
+        "assets/image_2.jpg",
+        "assets/image_3.png"
+      ]
+    }
+  ],
+  "pinned": [
+    "assets/image_1.jpg",
+    "assets/image_2.jpg",
+    "assets/image_3.png",
+    "assets/image_4.jpg",
+    "assets/onboarding3.jpg",
+    "assets/category_1.jpg"
+  ],
+  "ad_priority": [
+    {
+      "network": "AdMob",
+      "priority": 1,
+      "interstitial": "ca-app-pub-3940256099942544/1033173712",
+      "native": "ca-app-pub-3940256099942544/2247696110",
+      "banner": "ca-app-pub-3940256099942544/6300978111"
+    },
+    {
+      "network": "UnityAds",
+      "priority": 2,
+      "interstitial": "Interstitial_Android",
+      "native": "",
+      "banner": "Banner_Android",
+      "app_id": "5712423"
+    },
+    {
+      "network": "MetaAds",
+      "priority": 4,
+      "interstitial": "1256390695793858_1256391729127088",
+      "native": "1256390695793858_1256391839127077",
+      "banner": "1256390695793858_1256391625793765"
+    },
+    {
+      "network": "AppLovin",
+      "priority": 3,
+      "interstitial": "26d512ea6876f2ec",
+      "native": "9c887ce9aa106336",
+      "banner": "727ca3a0e2d391e8"
+    }
+  ]
+}

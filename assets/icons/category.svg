@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Created with Vectornator (http://vectornator.io/) -->
+<svg height="100%" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="0 0 20 20" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+<image height="100" id="Image" width="100" xlink:href="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAACuElEQVR4nO3dS2pUQRjF8S+KD5qEVkHNCxNfJAOxRSFDB+pASISOAZNCnegKzCSL0V3oUFcgDhXEFehER0oI4S8FNXCgQUG6Tt86PzgLqO+7feve6urqCDMzMzMzMzMzs8YBZ4EtYBvY6Ui2y5jOxLgArgKvgH26ax94CVwJZcBTYJd27AJPQhHwmHY9DCXAAvCDdn0HzoUK4EXtigh4HgqAI8DX2tUQ8A04qtCQG7UrIeS6QkPWaldByJpCQ+7UroKQ2woNuVS7CkIuhgLgY+1KCPgUKsoaT+uehQrgGPCBdr3PNQglwGXgC+35nOfRUAScB97RjrfAYigDDpWFxjfAHt2zB7wGHuWxxjgpyyrz5W2+C5nPY6pdVzMzMzMzMzMz+7+ACaAPzOZNZB3JbBnTxNhcL3lvEnANWAdSRzMEBhL7sA6St+kD9wUKlkaUfNGdDuFmbAoUKY04m3JNKbeplj4Z6TefFJ3bV5kzUuMZhNDTVJcn8PQPn5L6T1/ACYFiJJH0FRoyI1CIJJKZ2v1wQ9BrSF/gykwi6atM6kOBYqTKGYaKsoyQGs8gxF4MW370XZd6Mczy8oGXTsSUprS0hLIut471h9vXoOMT/XAslt9/5S+ozMzMzMzMzMxsnJRTHXrAZEfSG8fTGybKmSe3yrHcqWPZKmNblNiHdZByFd0VKFoaUfJYJ0MRMNXYl1OpJI95KpQAh4FVgeKkSlmVmluAZYGipMpZDhXl7N7UeO6F0NxRuxhJJPXnEmBaoBBJJNMKDZkTKEQSyZxCQ04JFCKJ5KTK8siGQDFS5WzIPPoCKwIFSZWzEirKotsDgaKkSslj74WScvREajQLoQi40NgO+M085lBWfuJ2s6NL76lkq4yx/k/Y/hZwvNzGlspO8S5kqYxJ658QzMzMzMzMzMzMYvR+AnVQU4k0BEUSAAAAAElFTkSuQmCC"/>
+</defs>
+<g id="Untitled" vectornator:layerName="Untitled">
+<g opacity="1" vectornator:layerName="rect">
+<clipPath id="ClipPath">
+<path d="M0.768066 0.25L19.7087 0.25L19.7087 0.25L19.7087 19.25L19.7087 19.25L0.768066 19.25L0.768066 19.25L0.768066 0.25L0.768066 0.25Z"/>
+</clipPath>
+<g clip-path="url(#ClipPath)">
+<use opacity="1" transform="matrix(0.189406 0 0 0.189406 0.5297 0.529678)" vectornator:layerName="image" xlink:href="#Image"/>
+</g>
+</g>
+</g>
+</svg>
