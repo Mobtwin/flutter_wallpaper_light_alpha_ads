@@ -75,3 +75,95 @@ flutter {
     source = "../.."
 }
 `;
+export const ANDROID_MANIFEST = ({
+    applicationName = "${applicationName}",
+    admobAppId = "ca-app-pub-3940256099942544~3347511713",
+    unityGameId = "5712423",
+    applovinSDKKey = "lv0C9ThoCyfGpyWxTbIaL9CW2ZnBnE7ShD_Ae4y8XEq41bsvIgfIMnmqfKC8PTTaz_BbB_betbZ654QrCA9PKI",
+  }:{applicationName?:string,
+      admobAppId?: string,
+      unityGameId?: string,
+      applovinSDKKey?: string,
+    }) => `
+  <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+      <uses-permission android:name="android.permission.INTERNET"/>
+      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+      <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+      <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  
+      <!-- foregroundServiceType: dataSync -->
+      <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+  
+      <!-- foregroundServiceType: remoteMessaging -->
+      <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING" />
+      
+      <!-- Single application block for AdMob, Facebook Audience Network, and Unity Ads -->
+      <application
+          android:networkSecurityConfig="@xml/network_security_config" 
+          android:usesCleartextTraffic="true"
+          android:label="\${applicationName}"   
+          android:name="\${applicationName}"
+          android:icon="@mipmap/ic_launcher">
+  
+          <meta-data
+              android:name="com.google.android.gms.ads.APPLICATION_ID"
+              android:value="${admobAppId}"/>
+              <!-- admob -->
+          <meta-data
+              android:name="com.unity3d.ads.gameId"
+              android:value="${unityGameId}" />
+              <!-- unity  -->
+          <meta-data 
+              android:name="unityads.sdk.debug_mode" 
+              android:value="true" />
+              
+          <meta-data
+              android:name="com.unity3d.ads.testMode"
+              android:value="false" /> <!-- Set to false in production -->
+          <!-- AppLovin SDK metadata -->
+         <meta-data android:name="applovin.sdk.key" android:value="${applovinSDKKey}"/>
+         <!-- applovin -->
+          <activity
+              android:name=".MainActivity"
+              android:exported="true"
+              android:launchMode="singleTop"
+              android:taskAffinity=""
+              android:theme="@style/LaunchTheme"
+              android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+              android:hardwareAccelerated="true"
+              android:windowSoftInputMode="adjustResize">
+              <meta-data
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme"
+                />
+              <intent-filter>
+                  <action android:name="android.intent.action.MAIN"/>
+                  <category android:name="android.intent.category.LAUNCHER"/>
+              </intent-filter>
+          </activity>
+  
+          <meta-data
+              android:name="flutterEmbedding"
+              android:value="2" />
+  
+          <!-- Foreground Service -->
+          <service 
+              android:name="com.pravera.flutter_foreground_task.service.ForegroundService"
+              android:foregroundServiceType="dataSync|remoteMessaging"
+              android:exported="false" />
+      </application>
+  
+      <queries>
+          <intent>
+              <action android:name="android.intent.action.PROCESS_TEXT"/>
+              <data android:mimeType="text/plain"/>
+          </intent>
+      </queries>
+  </manifest>
+  `;
+  
+  export const STRINGS_XML = ({facebookAppId="2563788477377677"}:{facebookAppId?: string,}) => `
+  <resources>
+      <string name="facebook_app_id">${facebookAppId}</string>
+  </resources>
+  `;
