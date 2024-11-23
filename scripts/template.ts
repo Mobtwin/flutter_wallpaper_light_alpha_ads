@@ -91,16 +91,10 @@ export const ANDROID_MANIFEST = ({
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="wallpapers"
-        android:name="${applicationName}"
+        android:name="\${applicationName}"
         android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
       <!-- Single application block for AdMob, Facebook Audience Network, and Unity Ads -->
-      <application
-          android:networkSecurityConfig="@xml/network_security_config" 
-          android:usesCleartextTraffic="true"
-          android:label="\${applicationName}"   
-          android:name="\${applicationName}"
-          android:icon="@mipmap/ic_launcher">
   
           <meta-data
               android:name="com.google.android.gms.ads.APPLICATION_ID"
