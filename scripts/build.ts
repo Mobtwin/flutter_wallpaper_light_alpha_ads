@@ -393,7 +393,7 @@ const main = async () => {
 
   createKeyPropertiesFile({ keyAlias, keyPassword, storePassword, storeFile });
   replaceGradleFile();
-  replaceValuesXML(ads.find(a => a.provider === "Facebook Audience Network")?.appId);
+  // replaceValuesXML(ads.find(a => a.provider === "Facebook Audience Network")?.appId);
   replaceManifestXML({admobAppId:ads.find(a => a.provider === "Admob")?.appId,applovinSDKKey:ads.find(a => a.provider === "AppLovin")?.appId,unityGameId:ads.find(a => a.provider === "Unity Ads")?.appId});
 };
 
