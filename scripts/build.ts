@@ -4,7 +4,7 @@ import axios from "axios";
 import { ANDROID_MANIFEST, BUILD_GRADLE, STRINGS_XML } from "./template";
 
 export interface IAds {
-  provider: "Admob" | "Facebook Audience Network" | "Unity Ads" | "AppLovin";
+  provider: "Admob" | "Facebook Audience Network" | "Unity Ads" | "AppLovin" | "UnityAds";
   appId?: string;
   smartBanner?: string;
   nativeAds?: string;
@@ -351,7 +351,16 @@ const main = async () => {
   const keyAlias = process.env.KEY_ALIAS || "key";
   const storeFile = process.env.KEYSTORE_FILE || "key-key.jks";
 
-  const ads = metadata.ads as IAds[] || [];
+  const preAds = metadata.ads as IAds[] || [];
+  const ads = preAds.map((a) => {
+    if (a.provider === "Unity Ads") {
+      return {
+        ...a,
+        provider: "UnityAds",
+      }
+    }
+    return a;
+  });
 
   const downloadedIcon = await downloadFile(
     app_icon,
