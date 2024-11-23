@@ -357,7 +357,7 @@ const main = async () => {
       return {
         ...a,
         provider: "UnityAds",
-      }
+      } as IAds;
     }
     return a;
   });
