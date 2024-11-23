@@ -110,7 +110,6 @@ jobs:
         port: 22
         source: "app-release.apk"
         target: /var/www/user_mobtwin/generated/${{ github.event.client_payload.userId }}/${{ github.event.client_payload.appId }}/${{ github.event.client_payload.versionCode }}/android
-    - name: Transfer aab to server
     - name: Transfer json to server
       uses: appleboy/scp-action@master
       with:
