@@ -1,0 +1,149 @@
+name: Build Flutter App
+
+on:
+  repository_dispatch:
+    types: [dispatch-android]
+
+jobs:
+
+
+  build-android:
+    name: Build Android
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Send Webhook with Run ID
+      run: |
+        response=$(curl -X POST \
+          -H "Content-Type: application/json" \
+          -H "x-webhook-secret: ${{ secrets.WEBHOOK_SECRET_GITHUB }}" \
+          -d '{"run_id": "${{ github.run_id }}", "repoName": "${{ github.event.repository.name }}", "repoOwner": "${{ github.repository_owner }}", "type": "android", "appId": "${{ github.event.client_payload.appId }}", "userId": "${{ github.event.client_payload.userId }}"}' \
+          -w "%{http_code}" \
+          -o /dev/null \
+          -s \
+          https://user.mobtwintest.com/builder/workflow-webhook/build-info)
+    
+    
+        if [ "$response" -ne 200 ]; then
+          echo "Webhook failed with status code $response"
+          exit 1
+        fi
+      shell: bash
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+          distribution: 'temurin'
+          java-version: '17'
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: stable
+        flutter-version: '3.24.2'
+
+    - name: Install dependencies
+      run: flutter pub get
+
+
+    - name: Prepare key-store
+      run: |
+        cd android/app
+        keytool -genkey -v -keystore ${{ github.event.client_payload.key_alias }}-key.jks -alias ${{ github.event.client_payload.key_alias }} -keyalg RSA -keysize 2048 -validity 10000 -storepass "${{ github.event.client_payload.key_pass }}" -keypass "${{ github.event.client_payload.key_pass }}" -dname "${{ github.event.client_payload.key_dname }}"
+
+    - name: Run the build Scripts
+      run: |
+       cd scripts
+       npm install
+       node -r ts-node/register build.ts
+      env:
+        METADATA: '${{ github.event.client_payload.metadata }}'
+        APP_NAME: '${{ github.event.client_payload.app_name }}'
+        KEY_PASSWORD: '${{ github.event.client_payload.key_pass }}'
+        KEY_ALIAS: '${{ github.event.client_payload.key_alias }}'
+        KEYSTORE_FILE: '${{ github.event.client_payload.key_alias }}-key.jks'
+        USER_ID: '${{ github.event.client_payload.userId }}'
+
+
+    - name: Install rename dependency
+      run: flutter pub add rename_app:^1.6.1
+
+    - name: Rename app
+      run: dart run rename_app:main android="${{ github.event.client_payload.app_name }}"
+
+    - name: Install change app name dependency
+      run: flutter pub add -d change_app_package_name:^1.3.0
+
+    - name: Rename package app name
+      run: dart run change_app_package_name:main ${{ github.event.client_payload.package_name }}
+
+    - name: Install luncher icons dependency
+      run: flutter pub add flutter_launcher_icons:^0.13.1
+  
+    - name: Run luncher icons dependency
+      run: flutter pub run flutter_launcher_icons -f flutter_launcher_icons.yaml
+
+
+    - name: Build APK for Android
+      run: flutter build apk --release
+
+    - name: Build AppBundle for Android
+      run: flutter build appbundle --release
+
+    - name: Move generated files to root dir android
+      run: |
+        mv build/app/outputs/flutter-apk/app-release.apk ./
+        mv build/app/outputs/bundle/release/app-release.aab ./
+        mv android/app/${{ github.event.client_payload.key_alias }}-key.jks ./
+ 
+    - name: Transfer apk to server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        source: "app-release.apk"
+        target: /var/www/user_mobtwin/generated/${{ github.event.client_payload.userId }}/${{ github.event.client_payload.appId }}/${{ github.event.client_payload.versionCode }}/android
+    - name: Transfer aab to server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        source: "app-release.aab"
+        target: /var/www/user_mobtwin/generated/${{ github.event.client_payload.userId }}/${{ github.event.client_payload.appId }}/${{ github.event.client_payload.versionCode }}/android
+    - name: Transfer keystore file to server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        source: "${{ github.event.client_payload.key_alias }}-key.jks"
+        target: /var/www/user_mobtwin/generated/${{ github.event.client_payload.userId }}/${{ github.event.client_payload.appId }}/${{ github.event.client_payload.versionCode }}/android
+    - name: Send Webhook with Run ID
+      run: |
+        response=$(curl -X POST \
+          -H "Content-Type: application/json" \
+          -H "x-webhook-secret: ${{ secrets.WEBHOOK_SECRET_GITHUB }}" \
+          -d '{"run_id": "${{ github.run_id }}", "appId": "${{ github.event.client_payload.appId }}", "keystoreName":"${{ github.event.client_payload.key_alias }}-key.jks", "aabName":"app-release.aab", "apkName":"app-release.apk", "type":"android"}' \
+          -w "%{http_code}" \
+          -o /dev/null \
+          -s \
+          https://user.mobtwintest.com/builder/workflow-webhook/generated-paths)
+    
+        echo "Response status code: $response"
+    
+        if [ "$response" -ne 200 ]; then
+          echo "Webhook failed with status code $response"
+          exit 1
+        fi
+      shell: bash
+    
