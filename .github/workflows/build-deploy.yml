@@ -81,12 +81,11 @@ jobs:
 
     - name: Rename package app name
       run: dart run change_app_package_name:main ${{ github.event.client_payload.package_name }}
-
     - name: Install luncher icons dependency
-      run: flutter pub add flutter_launcher_icons:^0.13.1
+      run: flutter pub add icons_launcher
   
     - name: Run luncher icons dependency
-      run: flutter pub run flutter_launcher_icons -f flutter_launcher_icons.yaml
+      run: dart run icons_launcher:create
 
 
     - name: Build APK for Android
