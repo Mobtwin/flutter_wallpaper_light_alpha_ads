@@ -88,5 +88,8 @@
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>App needs access to save photos.</string>
+	<key>AppLovinSdkKey</key>
+	<string>lv0C9ThoCyfGpyWxTbIaL9CW2ZnBnE7ShD_Ae4y8XEq41bsvIgfIMnmqfKC8PTTaz_BbB_betbZ654QrCA9PKI</string>
+
 </dict>
 </plist>

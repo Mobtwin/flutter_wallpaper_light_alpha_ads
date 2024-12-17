@@ -30,7 +30,10 @@ flutter_ios_podfile_setup
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
-
+  pod 'Google-Mobile-Ads-SDK'   # AdMob
+  pod 'FBAudienceNetwork', '6.15.2'       # Facebook Audience Network
+  pod 'UnityAds'                # Unity Ads
+  pod 'AppLovinSDK'             # AppLovin SDK
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do
     inherit! :search_paths
