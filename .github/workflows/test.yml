@@ -1,47 +1,176 @@
-name: Build Flutter APK
+name: Build and Sign iOS .ipa
 
 on:
-  push:
-    branches:
-      - main  # Change this to your desired branch
-  workflow_dispatch:  # Allows manual triggering
+  workflow_dispatch:
 
 jobs:
-  build-apk:
-    runs-on: ubuntu-latest
-    env:
-      CI: false
+  build:
+    runs-on: macos-latest
 
     steps:
-      # Step 1: Checkout the repository
+      # Step 1: Checkout the code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-       # This step verifies that JAVA_HOME is set correctly
-      - name: Check JAVA_HOME
-        run: echo $JAVA_HOME
-      # Step 2: Set up Flutter environment
-      - name: Setup Flutter
+      # Step 2: Set up Flutter
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'  # Specify the Flutter version or use "latest"
+          channel: stable
+          flutter-version: '3.24.2'
 
       # Step 3: Install dependencies
       - name: Install dependencies
         run: flutter pub get
+      - name: Rename package app name
+        run: dart run change_app_package_name:main com.example.wallpapers
 
-      # Step 4: Build APK
-      - name: Build APK
-        run: flutter build apk --release
+      # Step 4: Download Certificate and Provisioning Profile
+      - name: Download Certificate and Provisioning Profile
+        run: |
+          curl -o certificate.p12 "${{ secrets.CERTIFICATE_URL }}"
+          curl -o 2ab0d959-dc2b-443c-a1bb-d322d8219088.mobileprovision "${{ secrets.PROVISIONING_PROFILE_URL }}"
+          curl -o AppleWWDRCAG3.cer "https://user.mobtwintest.com/a/AppleWWDRCAG3.cer"
+        env:
+          CERTIFICATE_URL: ${{ secrets.CERTIFICATE_URL }}
+          PROVISIONING_PROFILE_URL: ${{ secrets.PROVISIONING_PROFILE_URL }}
 
-      # Step 5: Upload APK as artifact
-      - name: Upload APK
+      #security import certificate.p12 -k ~/Library/Keychains/login.keychain-db -P "${{ secrets.CERTIFICATE_PASSWORD }}" -T /usr/bin/codesign
+      #security unlock-keychain -p "${{ secrets.CERTIFICATE_PASSWORD }}" ~/Library/Keychains/build.keychain
+      #security import certificate.p12 -k ~/Library/Keychains/build.keychain -P "${{ secrets.CERTIFICATE_PASSWORD }}" -T /usr/bin/codesign
+      # Step 5: Import Certificate
+      - name: Import Certificate
+        run: |
+          security create-keychain -p "${{ secrets.CERTIFICATE_PASSWORD }}" build.keychain
+          security import certificate.p12 -k ~/Library/Keychains/build.keychain -P "${{ secrets.CERTIFICATE_PASSWORD }}" -T /usr/bin/codesign
+          security import AppleWWDRCAG3.cer
+          security list-keychains -s ~/Library/Keychains/build.keychain
+          security find-identity -p codesigning -v
+          
+      #security set-key-partition-list -S apple-tool:,apple: -s -k "${{ secrets.CERTIFICATE_PASSWORD }}" ~/Library/Keychains/login.keychain-db
+      - name: Unlock keychain
+        run: |
+          security unlock-keychain -p "${{ secrets.CERTIFICATE_PASSWORD }}" ~/Library/Keychains/build.keychain
+      - name: list keychain
+        run: |
+          security list-keychains
+      - name: info keychain
+        run: |
+          security show-keychain-info ~/Library/Keychains/build.keychain
+      - name: find-identity keychain
+        run: |
+          security find-identity -p codesigning -v ~/Library/Keychains/build.keychain
+      - name: find-identity keychain
+        run: |
+          security set-key-partition-list -S apple-tool:,apple: -s -k "${{ secrets.CERTIFICATE_PASSWORD }}" ~/Library/Keychains/build.keychain
+      # Step 6: Set up Provisioning Profile
+      - name: Set up Provisioning Profile
+        run: |
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp 2ab0d959-dc2b-443c-a1bb-d322d8219088.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+      # Step 7: Build iOS app (signed)
+      - name: Build iOS app (signed)
+        run: |
+          cd ios
+          pod install
+          cd ..
+          flutter build ios --release --no-codesign
+      # Step: Create Entitlements File
+      - name: Create Entitlements File
+        run: |
+          echo '<?xml version="1.0" encoding="UTF-8"?>' > ios/Runner/Runner.entitlements
+          echo '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> ios/Runner/Runner.entitlements
+          echo '<plist version="1.0">' >> ios/Runner/Runner.entitlements
+          echo '  <dict>' >> ios/Runner/Runner.entitlements
+          echo '    <key>aps-environment</key>' >> ios/Runner/Runner.entitlements
+          echo '    <string>production</string>' >> ios/Runner/Runner.entitlements
+          echo '  </dict>' >> ios/Runner/Runner.entitlements
+          echo '</plist>' >> ios/Runner/Runner.entitlements
+      # Step: Verify Working Directory and Entitlements File
+      - name: Verify Working Directory and Entitlements File
+        run: |
+          pwd
+          ls -l ios/Runner
+          cat ios/Runner/Runner.entitlements
+                # Step 8: Use xcodebuild to sign the app with the provisioning profile
+      - name: Sign iOS app with xcodebuild
+        run: |
+          cd build/ios/iphoneos
+          xcodebuild -workspace $GITHUB_WORKSPACE/ios/Runner.xcworkspace \
+             -scheme Runner \
+             -configuration Release \
+             -sdk iphoneos \
+             -verbose \
+             -archivePath $PWD/Runner.xcarchive \
+             clean archive \
+             CODE_SIGN_IDENTITY="Apple Distribution: James Oldwoods (N985XLQHFY)" \
+             PROVISIONING_PROFILE_SPECIFIER="2ab0d959-dc2b-443c-a1bb-d322d8219088" \
+             CODE_SIGN_STYLE=Manual \
+             DEVELOPMENT_TEAM=N985XLQHFY
+      - name: create EXPORT OPTIONS PLIST
+        run: |
+          cat > ios/ExportOptions.plist <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <plist version="1.0">
+              <dict>
+                  <!-- The method specifies how the IPA will be exported -->
+                  <key>method</key>
+                  <string>app-store</string> <!-- Use "ad-hoc" for Ad-hoc distribution, or "enterprise" for Enterprise apps -->
+          
+                  <!-- The Team ID for signing -->
+                  <key>teamID</key>
+                  <string>N985XLQHFY</string> <!-- Replace with your Team ID -->
+          
+                  <!-- The provisioning profile to use -->
+                  <key>provisioningProfiles</key>
+                  <dict>
+                      <key>com.example.wallpapers</key> <!-- Replace with your app's bundle identifier -->
+                      <string>2ab0d959-dc2b-443c-a1bb-d322d8219088</string> <!-- Replace with your provisioning profile UUID -->
+                  </dict>
+          
+                  <!-- Signing style (Manual or Automatic) -->
+                  <key>signingStyle</key>
+                  <string>manual</string>
+          
+                  <!-- The certificate to use for signing -->
+                  <key>signingCertificate</key>
+                  <string>Apple Distribution: James Oldwoods (N985XLQHFY)</string>
+          
+                  <!-- Whether to include app thinning -->
+                  <key>appThinning</key>
+                  <string>false</string>
+          
+                  <!-- Destination for exporting (app-store, ad-hoc, etc.) -->
+                  <key>destination</key>
+                  <string>export</string>
+          
+                  <!-- Options related to uploading for app store -->
+                  <key>uploadSymbols</key>
+                  <true/> <!-- If you want to upload symbol files for debugging -->
+          
+                  <!-- Enable or disable bitcode. -->
+                  <key>bitcode</key>
+                  <string>disable</string> <!-- Set to "enable" if using Bitcode -->
+          
+                  <!-- Specify if you want to include the signing entitlements -->
+                  <key>includeProvisioningProfiles</key>
+                  <true/> <!-- You generally want to include this when manually managing provisioning profiles -->
+              </dict>
+          </plist>
+          
+          EOF
+      
+      # Step 9: Create IPA Package
+      - name: Create IPA Package
+        run: |
+          cd build/ios/iphoneos
+          xcodebuild -exportArchive \
+            -archivePath $PWD/Runner.xcarchive \
+            -exportPath  $GITHUB_WORKSPACE/Runner.ipa \
+            -exportOptionsPlist $GITHUB_WORKSPACE/ios/ExportOptions.plist
+      # Step 10: Upload Signed IPA as Artifact
+      - name: Upload Signed IPA
         uses: actions/upload-artifact@v3
         with:
-          name: app-release.apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: Runner.ipa
+          path: Runner.ipa

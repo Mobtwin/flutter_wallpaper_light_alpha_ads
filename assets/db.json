@@ -79,7 +79,7 @@
   "ad_priority": [
     {
       "network": "AdMob",
-      "priority": 1,
+      "priority": 3,
       "interstitial": "ca-app-pub-3940256099942544/1033173712",
       "native": "ca-app-pub-3940256099942544/2247696110",
       "banner": "ca-app-pub-3940256099942544/6300978111"
@@ -101,7 +101,7 @@
     },
     {
       "network": "AppLovin",
-      "priority": 3,
+      "priority": 1,
       "interstitial": "26d512ea6876f2ec",
       "native": "9c887ce9aa106336",
       "banner": "727ca3a0e2d391e8"
