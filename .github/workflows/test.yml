@@ -22,6 +22,8 @@ jobs:
       # Step 3: Install dependencies
       - name: Install dependencies
         run: flutter pub get
+      - name: Install dependencies change_app_package_name
+        run: flutter pub add change_app_package_name
       - name: Rename package app name
         run: dart run change_app_package_name:main com.example.wallpapers
 
