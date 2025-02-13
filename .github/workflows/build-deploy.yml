@@ -40,7 +40,10 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 20
-
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
@@ -100,43 +103,20 @@ jobs:
         mv build/app/outputs/bundle/release/app-release.aab ./
         mv android/app/${{ github.event.client_payload.key_alias }}-key.jks ./
         mv assets/db.json ./
- 
-    - name: Transfer apk to server
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: 22
-        source: "app-release.apk"
-        target: /var/www/user_mobtwin/generated/${{ github.event.client_payload.userId }}/${{ github.event.client_payload.appId }}/${{ github.event.client_payload.versionCode }}/android
-    - name: Transfer json to server
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: 22
-        source: "db.json"
-        target: /var/www/user_mobtwin/generated/${{ github.event.client_payload.userId }}/${{ github.event.client_payload.appId }}/${{ github.event.client_payload.versionCode }}/android
-    - name: Transfer aab to server
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: 22
-        source: "app-release.aab"
-        target: /var/www/user_mobtwin/generated/${{ github.event.client_payload.userId }}/${{ github.event.client_payload.appId }}/${{ github.event.client_payload.versionCode }}/android
-    - name: Transfer keystore file to server
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: 22
-        source: "${{ github.event.client_payload.key_alias }}-key.jks"
-        target: /var/www/user_mobtwin/generated/${{ github.event.client_payload.userId }}/${{ github.event.client_payload.appId }}/${{ github.event.client_payload.versionCode }}/android
+
+    - name: Authenticate with Google Cloud
+      run: |
+        echo '${{ secrets.GCP_SA_KEY }}' > gcp-key.json
+        gcloud auth activate-service-account --key-file=gcp-key.json
+    - name: Upload files to Google Cloud Storage
+      run: |
+        gsutil ls gs://${{ secrets.BUCKET_NAME }}
+        gcloud auth print-access-token
+        gsutil cp app-release.apk gs://${{ secrets.BUCKET_NAME }}/builder/${{ github.event.client_payload.userId }}/${{ github.event.client_payload.appId }}/android/${{ github.event.client_payload.versionCode }}/
+        gsutil cp app-release.aab gs://${{ secrets.BUCKET_NAME }}/builder/${{ github.event.client_payload.userId }}/${{ github.event.client_payload.appId }}/android/${{ github.event.client_payload.versionCode }}/
+        gsutil cp ${{ github.event.client_payload.key_alias }}-key.jks gs://${{ secrets.BUCKET_NAME }}/builder/${{ github.event.client_payload.userId }}/${{ github.event.client_payload.appId }}/android/${{ github.event.client_payload.versionCode }}/
+        gsutil cp db.json gs://${{ secrets.BUCKET_NAME }}/builder/${{ github.event.client_payload.userId }}/${{ github.event.client_payload.appId }}/android/${{ github.event.client_payload.versionCode }}/
+  
     - name: Send Webhook with Run ID
       run: |
         response=$(curl -X POST \

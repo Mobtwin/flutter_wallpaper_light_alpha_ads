@@ -37,40 +37,37 @@ export interface AdsPriority {
   banner?:string;
   app_id?:string;
 }
-async function downloadFile(
-  url: string,
-  outputPath: string,
-  query?: string
-): Promise<string | null> {
+
+const getFilename = (url:string) => {
+  const urlWithoutParams = url.split("?")[0];
+  return urlWithoutParams.split("/").pop();
+}
+
+async function downloadFile(signedUrl: string, outputPath: string): Promise<string|null> {
   try {
-    let response;
-    if (query) {
-      response = await axios({
-        url,
-        method: "GET",
-        responseType: "stream",
-        params:{
-          userId: query 
-        }
-      });
-    } else {
-      response = await axios({
-        url,
-        method: "GET",
-        responseType: "stream",
-      });
-    }
+      // Decode the signed URL to handle special characters
+      const decodedUrl = decodeURIComponent(signedUrl);
+      const urlObj = new URL(decodedUrl);
 
-    const writer = fs.createWriteStream(outputPath);
-    response.data.pipe(writer);
+      console.log("Downloading:", urlObj.href);
 
-    return new Promise((resolve, reject) => {
-      writer.on("finish", () => resolve(outputPath));
-      writer.on("error", reject);
-    });
+      const response = await axios({
+          method: "GET",
+          url: urlObj.href,
+          responseType: "stream",
+      });
+
+      // Write the response stream to a file
+      const writer = fs.createWriteStream(outputPath);
+      response.data.pipe(writer);
+
+      return new Promise<string>((resolve, reject) => {
+          writer.on("finish", () => resolve(outputPath));
+          writer.on("error", reject);
+      });
   } catch (error) {
-    console.error(`Failed to download file from ${url}:`, error);
-    return null;
+      console.error("❌ Download failed:", error);
+      return null;
   }
 }
 
@@ -151,11 +148,11 @@ const downloadAssets = async (categories: ICategory[],carousel:string[], userId:
 
   const categoriesPromises = categories.map(async (item) => {
     const newImages: string[] = [];
-    const iconPath = path.join(assetsDir, item.icon.split("/").pop()!);
-    await downloadFile(item.icon, iconPath, userId);
+    const iconPath = path.join(assetsDir, getFilename(item.icon)!);
+    await downloadFile(item.icon, iconPath);
     item.images.map(async (image) => {
-      const imagePath = path.join(assetsDir, image.split("/").pop()!);
-      await downloadFile(image, imagePath, userId);
+      const imagePath = path.join(assetsDir, getFilename(image)!);
+      await downloadFile(image, imagePath);
       newImages.push(imagePath.split("/").slice(-2).join("/"));
     });
     return {
@@ -167,8 +164,8 @@ const downloadAssets = async (categories: ICategory[],carousel:string[], userId:
   });
 
   const carouselPromises = carousel.map(async (item) => {
-    const imagePath = path.join(assetsDir, item.split("/").pop()!);
-    await downloadFile(item, imagePath, userId);
+    const imagePath = path.join(assetsDir, getFilename(item)!);
+    await downloadFile(item, imagePath);
     return imagePath.split("/").slice(-2).join("/");
   }
   );
@@ -196,7 +193,7 @@ const downloadIntro = async (intro: IStep[]) => {
   const newIntro: IStep[] = [];
 
   const downloadPromises = intro.map(async (item) => {
-    const iconPath = path.join(assetsDir, item.content.poster.split("/").pop()!);
+    const iconPath = path.join(assetsDir, getFilename(item.content.poster)!);
 
     await downloadFile(item.content.poster, iconPath);
 
@@ -368,7 +365,7 @@ const main = async () => {
   );
   const downloadedSplash = await downloadFile(
     splash_url,
-    path.join(__dirname, "..", "assets", splash_url.split("/").pop()!)
+    path.join(__dirname, "..", "assets", getFilename(splash_url)!)
   );
 
   const content = await downloadAssets(categories,carousel,userId);
