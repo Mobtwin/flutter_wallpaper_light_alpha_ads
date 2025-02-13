@@ -122,7 +122,7 @@ jobs:
         response=$(curl -X POST \
           -H "Content-Type: application/json" \
           -H "x-webhook-secret: ${{ secrets.WEBHOOK_SECRET_GITHUB }}" \
-          -d '{"run_id": "${{ github.run_id }}", "appId": "${{ github.event.client_payload.appId }}", "keystoreName":"${{ github.event.client_payload.key_alias }}-key.jks", "aabName":"app-release.aab", "apkName":"app-release.apk", "type":"android"}' \
+          -d '{"run_id": "${{ github.run_id }}", "appId": "${{ github.event.client_payload.appId }}", "userId": "${{ github.event.client_payload.userId }}", "versionCode": "${{ github.event.client_payload.versionCode }}", "keystoreName":"${{ github.event.client_payload.key_alias }}-key.jks", "aabName":"app-release.aab", "apkName":"app-release.apk", "type":"android"}' \
           -w "%{http_code}" \
           -o /dev/null \
           -s \
